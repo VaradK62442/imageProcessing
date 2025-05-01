@@ -159,3 +159,26 @@ def moments(frame: cv2.Mat, threshold: float = 0.5) -> cv2.Mat:
         cv2.hconcat([cv2.cvtColor(grey, cv2.COLOR_GRAY2BGR), frame]),
         cv2.hconcat([ellipse_thresh, cv2.cvtColor(thresh_bin, cv2.COLOR_GRAY2BGR)]),
     ])
+
+
+def all_methods(frame: cv2.Mat) -> cv2.Mat:
+    """
+    Apply all segmentation methods to the frame.
+
+    Args:
+        frame: The input frame.
+        kwargs: Additional arguments for each method.
+
+    Returns:
+        Two by two tiling of original frame, greyscale frame,
+        thresholded frame, and ellipsoid frame.
+    """
+    thresholding_img = thresholding(frame)
+    estimating_thresholding_img = estimating_thresholding(frame)
+    intensity_rg_by_img = intensity_rg_by(frame)
+    moments_img = moments(frame)
+
+    return cv2.vconcat([
+        cv2.hconcat([estimating_thresholding_img, thresholding_img]),
+        cv2.hconcat([moments_img, intensity_rg_by_img]),
+    ])

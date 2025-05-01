@@ -9,6 +9,7 @@ from methods import (
     estimating_thresholding,
     intensity_rg_by,
     moments,
+    all_methods,
 )
 
 
@@ -37,5 +38,5 @@ class Segment:
 
 
 if __name__ == "__main__":
-    segmenter = Segment(segmentation_method=estimating_thresholding)
+    segmenter = Segment(segmentation_method=all_methods)
     segmenter.segment()
