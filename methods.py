@@ -199,6 +199,40 @@ def convolve_edges(frame: cv2.Mat) -> cv2.Mat:
     ])
 
 
+def convolve_edges_advanced(frame: cv2.Mat) -> cv2.Mat:
+    """
+    Convolve the frame with advanced kernels.
+    We use the
+    - Sobel kernel (both horizontal and vertical): edge detection using first derivative
+    - Laplacian kernel: edge detection using second derivative
+    - Scharr kernel (both horizontal and vertical): better edge detection than Sobel and Laplacian
+
+    Args:
+        frame: The input frame.
+
+    Returns:
+        The convolved frame.
+    """
+    sobel_x = np.array([[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]])
+    sobel_y = np.array([[1, 2, 1], [0, 0, 0], [-1, -2, -1]])
+    laplacian = np.array([[0, -1, 0], [-1, 4, -1], [0, -1, 0]])
+    scharr_x = np.array([[-3, 0, 3], [-10, 0, 10], [-3, 0, 3]])
+    scharr_y = np.array([[3, 10, 3], [0, 0, 0], [-3, -10, -3]])
+
+    sobel = np.hstack([sobel_x, sobel_y])
+    scharr = np.hstack([scharr_x, scharr_y])
+    
+    sobel_img = cv2.filter2D(frame, -1, sobel)
+    laplacian_img = cv2.filter2D(frame, -1, laplacian)
+    scharr_img = cv2.filter2D(frame, -1, scharr)
+
+    return cv2.vconcat([
+        cv2.hconcat([sobel_img, frame]),
+        cv2.hconcat([scharr_img, laplacian_img]),
+    ])
+    
+
+
 def all_methods(frame: cv2.Mat) -> cv2.Mat:
     """
     Apply all segmentation methods to the frame.
