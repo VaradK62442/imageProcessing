@@ -232,21 +232,19 @@ def convolve_edges_advanced(frame: cv2.Mat) -> cv2.Mat:
     ])
 
 
-_prev_randomised_kernel = None
-alpha = 0.1  # weight for the randomised kernel
+_previous_frame = None
 
-def _generate_randomised_kernel() -> np.ndarray:
-    global _prev_randomised_kernel
+def _apply_motion_blur(frame: cv2.Mat) -> cv2.Mat:
+    global _previous_frame
+    alpha = 0.5
 
-    if _prev_randomised_kernel is None:
-        _prev_randomised_kernel = np.random.rand(3, 3)
-    
-    else:
-        _prev_randomised_kernel = (1 - alpha) * _prev_randomised_kernel + \
-            alpha * np.random.rand(3, 3).astype(np.float32) * \
-                (-1 if np.random.rand() < 0.5 else 1)
-
-    return _prev_randomised_kernel
+    if _previous_frame is None:
+        _previous_frame = frame
+        return frame
+        
+    new_frame = cv2.addWeighted(frame, alpha, _previous_frame, 1-alpha, 0)
+    _previous_frame = frame
+    return new_frame
 
 
 def convolve_specialised(frame: cv2.Mat) -> cv2.Mat:
@@ -255,7 +253,7 @@ def convolve_specialised(frame: cv2.Mat) -> cv2.Mat:
     Specifically,
     - Gabor kernel: used for texture analysis
     - Emboss kernel: used for edge detection with a 3D effect
-    - Randomised kernel (new each frame): used for random noise generation
+    - Motion blur kernel: used for simulating motion blur
 
     Args:
         frame: The input frame.
@@ -276,15 +274,14 @@ def convolve_specialised(frame: cv2.Mat) -> cv2.Mat:
         [-1, 1, 1],
         [0, 1, 2]
     ])
-    randomised = _generate_randomised_kernel()
 
     gabor_img = cv2.filter2D(frame, -1, gabor)
     emboss_img = cv2.filter2D(frame, -1, emboss)
-    randomised_img = cv2.filter2D(frame, -1, randomised)
+    motion_blur_img = _apply_motion_blur(frame)
 
     return cv2.vconcat([
         cv2.hconcat([gabor_img, frame]),
-        cv2.hconcat([randomised_img, emboss_img]),
+        cv2.hconcat([motion_blur_img, emboss_img]),
     ])
 
 
