@@ -10,6 +10,7 @@ from methods import (
     intensity_rg_by,
     moments,
     combination,
+    convolve,
     convolve_edges,
     convolve_edges_advanced,
     convolve_specialised,

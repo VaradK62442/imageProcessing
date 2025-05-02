@@ -161,7 +161,7 @@ def moments(frame: cv2.Mat, threshold: float = 0.5) -> cv2.Mat:
     ])
 
 
-def convolve(frame: cv2.Mat, kernel: np.ndarray) -> cv2.Mat:
+def convolve(frame: cv2.Mat, kernel: np.ndarray = None) -> cv2.Mat:
     """
     Convolve the frame with a given kernel.
 
@@ -172,6 +172,12 @@ def convolve(frame: cv2.Mat, kernel: np.ndarray) -> cv2.Mat:
     Returns:
         The convolved frame.
     """
+    if kernel is None:
+        kernel = np.array([
+            [0, 0, 0],
+            [0, 1, 0],
+            [0, 0, 0]
+        ])
     return cv2.filter2D(frame, -1, kernel)
 
 
