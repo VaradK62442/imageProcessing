@@ -17,15 +17,15 @@ from methods import (
 )
 
 
-class Segment:
-    def __init__(self, segmentation_method):
+class Process:
+    def __init__(self, processing_method):
         self.cam = cv2.VideoCapture(0)
         self._width = int(self.cam.get(cv2.CAP_PROP_FRAME_WIDTH))
         self._height = int(self.cam.get(cv2.CAP_PROP_FRAME_HEIGHT))
 
-        self.method = segmentation_method
+        self.method = processing_method
 
-    def segment(self, **kwargs):
+    def process(self, **kwargs):
         while True:
             ret, frame = self.cam.read()
             if not ret:
@@ -42,8 +42,8 @@ class Segment:
 
 
 if __name__ == "__main__":
-    segmenter = Segment(segmentation_method=combination)
-    segmenter.segment(methods=[
+    processor = Process(processing_method=combination)
+    processor.process(methods=[
         convolve_edges,
         convolve_edges_advanced,
         convolve_specialised,
