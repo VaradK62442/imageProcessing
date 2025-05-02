@@ -161,6 +161,44 @@ def moments(frame: cv2.Mat, threshold: float = 0.5) -> cv2.Mat:
     ])
 
 
+def convolve(frame: cv2.Mat, kernel: np.ndarray) -> cv2.Mat:
+    """
+    Convolve the frame with a given kernel.
+
+    Args:
+        frame: The input frame.
+        kernel: The kernel to convolve with.
+
+    Returns:
+        The convolved frame.
+    """
+    return cv2.filter2D(frame, -1, kernel)
+
+
+def convolve_edges(frame: cv2.Mat) -> cv2.Mat:
+    """
+    Convolve the frame with horizontal, vertical, and both convolutions.
+
+    Args:
+        frame: The input frame.
+
+    Returns:
+        The convolved frame.
+    """
+    h_edge = np.array([[-1, -1, -1], [0, 0, 0], [1, 1, 1]])
+    v_edge = np.array([[-1, 0, 1], [-1, 0, 1], [-1, 0, 1]])
+    all_kernel = np.hstack([h_edge, v_edge])
+
+    h_edge_img = cv2.filter2D(frame, -1, h_edge)
+    v_edge_img = cv2.filter2D(frame, -1, v_edge)
+    all_kernel_img = cv2.filter2D(frame, -1, all_kernel)
+
+    return cv2.vconcat([
+        cv2.hconcat([all_kernel_img, frame]),
+        cv2.hconcat([h_edge_img, v_edge_img]),
+    ])
+
+
 def all_methods(frame: cv2.Mat) -> cv2.Mat:
     """
     Apply all segmentation methods to the frame.

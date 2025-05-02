@@ -10,6 +10,7 @@ from methods import (
     intensity_rg_by,
     moments,
     all_methods,
+    convolve_edges,
 )
 
 
@@ -38,5 +39,5 @@ class Segment:
 
 
 if __name__ == "__main__":
-    segmenter = Segment(segmentation_method=all_methods)
+    segmenter = Segment(segmentation_method=convolve_edges)
     segmenter.segment()
