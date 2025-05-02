@@ -14,6 +14,7 @@ from methods import (
     convolve_edges,
     convolve_edges_advanced,
     convolve_specialised,
+    contour,
 )
 
 
@@ -43,8 +44,9 @@ class Process:
 
 if __name__ == "__main__":
     processor = Process(processing_method=combination)
-    processor.process(methods=[
+    processor.process(methods = [
         convolve_edges,
         convolve_edges_advanced,
         convolve_specialised,
+        contour
     ])

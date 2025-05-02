@@ -291,6 +291,30 @@ def convolve_specialised(frame: cv2.Mat) -> cv2.Mat:
     ])
 
 
+def contour(frame: cv2.Mat) -> cv2.Mat:
+    """
+    Find contours in the frame.
+
+    Args:
+        frame: The input frame.
+
+    Returns:
+        The frame with contours drawn on it.
+    """
+    grey = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    thresh = cv2.threshold(grey, 127, 255, cv2.THRESH_BINARY)[1]
+    contours, _ = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+    # Draw contours on the original frame
+    contour_frame = frame.copy()
+    cv2.drawContours(contour_frame, contours, -1, (255, 0, 0), 3)
+
+    return cv2.vconcat([
+        cv2.hconcat([cv2.cvtColor(grey, cv2.COLOR_GRAY2BGR), frame]),
+        cv2.hconcat([contour_frame, cv2.cvtColor(thresh, cv2.COLOR_GRAY2BGR)]),
+    ])
+
+
 def _identity_method(frame: cv2.Mat) -> cv2.Mat:
     return cv2.vconcat([
         cv2.hconcat([frame, frame]),
@@ -320,6 +344,8 @@ def combination(frame: cv2.Mat, methods = None) -> cv2.Mat:
         moments,
         convolve_edges,
         convolve_edges_advanced,
+        convolve_specialised,
+        contour
     ]
 
     if methods is None:
