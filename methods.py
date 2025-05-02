@@ -230,27 +230,48 @@ def convolve_edges_advanced(frame: cv2.Mat) -> cv2.Mat:
         cv2.hconcat([sobel_img, frame]),
         cv2.hconcat([scharr_img, laplacian_img]),
     ])
-    
 
 
-def all_methods(frame: cv2.Mat) -> cv2.Mat:
+def _identity_method(frame: cv2.Mat) -> cv2.Mat:
+    return cv2.vconcat([
+        cv2.hconcat([frame, frame]),
+        cv2.hconcat([frame, frame])
+    ])  
+
+
+def combination(frame: cv2.Mat, methods = None) -> cv2.Mat:
     """
     Apply all segmentation methods to the frame.
-
+    Assumes each method returns a 2x2 grid of images.
+    
     Args:
         frame: The input frame.
-        kwargs: Additional arguments for each method.
+        methods: The list of methods to apply. If None, apply all methods.
+            Default is None.
 
     Returns:
         Two by two tiling of original frame, greyscale frame,
         thresholded frame, and ellipsoid frame.
     """
-    thresholding_img = thresholding(frame)
-    estimating_thresholding_img = estimating_thresholding(frame)
-    intensity_rg_by_img = intensity_rg_by(frame)
-    moments_img = moments(frame)
+    # selecting all methods is very slow performance
+    methods_list = [
+        thresholding,
+        estimating_thresholding,
+        intensity_rg_by,
+        moments,
+        convolve_edges,
+        convolve_edges_advanced,
+    ]
 
-    return cv2.vconcat([
-        cv2.hconcat([estimating_thresholding_img, thresholding_img]),
-        cv2.hconcat([moments_img, intensity_rg_by_img]),
-    ])
+    if methods is None:
+        methods = methods_list
+    
+    if len(methods) % 2 == 1:
+        # add a dummy method to make it even
+        methods.append(_identity_method)
+
+    imgs = [method(frame) for method in methods][::-1] # reverse list to preserve specified order
+    horizontal_concat = [cv2.hconcat([imgs[i], imgs[i+1]]) for i in range(0, len(imgs)-1, 2)]
+    vertical_concat = cv2.vconcat(horizontal_concat[::-1])
+    
+    return vertical_concat

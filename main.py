@@ -9,7 +9,7 @@ from methods import (
     estimating_thresholding,
     intensity_rg_by,
     moments,
-    all_methods,
+    combination,
     convolve_edges,
     convolve_edges_advanced,
 )
@@ -40,5 +40,7 @@ class Segment:
 
 
 if __name__ == "__main__":
-    segmenter = Segment(segmentation_method=convolve_edges_advanced)
-    segmenter.segment()
+    segmenter = Segment(segmentation_method=combination)
+    segmenter.segment(methods=[
+        convolve_edges, convolve_edges_advanced
+    ])
