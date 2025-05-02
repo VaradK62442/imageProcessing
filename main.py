@@ -12,6 +12,7 @@ from methods import (
     combination,
     convolve_edges,
     convolve_edges_advanced,
+    convolve_specialised,
 )
 
 
@@ -42,5 +43,7 @@ class Segment:
 if __name__ == "__main__":
     segmenter = Segment(segmentation_method=combination)
     segmenter.segment(methods=[
-        convolve_edges, convolve_edges_advanced
+        convolve_edges,
+        convolve_edges_advanced,
+        convolve_specialised,
     ])
